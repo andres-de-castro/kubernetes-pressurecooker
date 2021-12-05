@@ -3,7 +3,7 @@ FROM golang:1.14 AS builder
 COPY . /work
 WORKDIR /work
 RUN useradd pressurecooker
-RUN cd /work ; go build -o kubernetes-pressurecooker cmd/main.go
+RUN cd /work ; CGO_ENABLED=0 go build -o kubernetes-pressurecooker cmd/main.go
 
 FROM scratch
 

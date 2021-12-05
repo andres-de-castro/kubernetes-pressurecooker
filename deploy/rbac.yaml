@@ -1,0 +1,26 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  # "namespace" omitted since ClusterRoles are not namespaced
+  name: kubernetes-pressurecooker-cr
+rules:
+- apiGroups: [""]
+  #
+  # at the HTTP level, the name of the resource for accessing Secret
+  # objects is "secrets"
+  resources: ["nodes"]
+  verbs: ["get", "watch", "list", "edit"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+# This cluster role binding allows anyone in the "manager" group to read secrets in any namespace.
+kind: ClusterRoleBinding
+metadata:
+  name: kubernetes-pressurecooker-crb
+subjects:
+- kind: ServiceAccount
+  name: kubernetes-pressurecooker
+  namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: kubernetes-pressurecooker-cr
+  apiGroup: rbac.authorization.k8s.io
