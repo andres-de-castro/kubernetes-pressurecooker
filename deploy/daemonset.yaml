@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: kubernetes-pressurecooker
+  namespace: kube-system
+  labels:
+    k8s-app: kubernetes-pressurecooker
+spec:
+  selector:
+    matchLabels:
+      name: kubernetes-pressurecooker
+  template:
+    metadata:
+      labels:
+        name: kubernetes-pressurecooker
+    spec:
+      serviceAccountName: kubernetes-pressurecooker
+      containers:
+      - name: kubernetes-pressurecooker
+        image: decastroandres/kubernetes-pressurecooker:latest
+        args: [
+          "-node-name=$(MY_NODE_NAME)"
+        ]
+        env:
+          - name: MY_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName        
+        resources:
+          limits:
+            memory: "500Mi"
+          requests:
+            memory: "128Mi"
+            cpu: "200m"
+        ports:
+        - containerPort: 80
+      terminationGracePeriodSeconds: 30
